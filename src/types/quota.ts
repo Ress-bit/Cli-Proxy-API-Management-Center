@@ -258,3 +258,24 @@ export interface KimiQuotaState {
   error?: string;
   errorStatus?: number;
 }
+
+// Kiro API payload types
+export interface KiroQuotaPayload {
+  auth_index: string;
+  email: string;
+  profile_arn: string;
+  total_limit: number;
+  current_usage: number;
+  remaining_quota: number;
+  is_exhausted: boolean;
+  resource_type: 'CREDIT' | 'AGENTIC_REQUEST';
+  next_reset: string;
+  usage_percentage: number;
+}
+
+export interface KiroQuotaState {
+  status: 'idle' | 'loading' | 'success' | 'error';
+  data?: KiroQuotaPayload;
+  error?: string;
+  errorStatus?: number;
+}

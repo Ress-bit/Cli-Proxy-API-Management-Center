@@ -25,9 +25,7 @@ export function isClaudeOAuthFile(file: AuthFileItem): boolean {
       ? (file.metadata as Record<string, unknown>)
       : null;
   const accessToken =
-    metadata && typeof metadata.access_token === 'string'
-      ? metadata.access_token.trim()
-      : '';
+    metadata && typeof metadata.access_token === 'string' ? metadata.access_token.trim() : '';
   return accessToken.includes('sk-ant-oat');
 }
 
@@ -41,6 +39,10 @@ export function isGeminiCliFile(file: AuthFileItem): boolean {
 
 export function isKimiFile(file: AuthFileItem): boolean {
   return resolveAuthProvider(file) === 'kimi';
+}
+
+export function isKiroFile(file: AuthFileItem): boolean {
+  return resolveAuthProvider(file) === 'kiro';
 }
 
 export function isRuntimeOnlyAuthFile(file: AuthFileItem): boolean {

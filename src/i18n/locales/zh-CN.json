@@ -635,6 +635,24 @@
     "limit_index": "限额 #{{index}}",
     "reset_hint": "{{hint}} 后重置"
   },
+  "kiro_quota": {
+    "title": "Kiro 额度",
+    "empty_title": "暂无 Kiro 认证",
+    "empty_desc": "上传 Kiro 认证文件后即可查看额度。",
+    "idle": "点击此处刷新额度",
+    "loading": "正在加载额度...",
+    "load_failed": "额度获取失败：{{message}}",
+    "missing_auth_index": "认证文件缺少 auth_index",
+    "empty_data": "暂无额度数据",
+    "refresh_button": "刷新额度",
+    "fetch_all": "获取全部",
+    "profile_arn": "配置文件",
+    "email": "邮箱",
+    "resource_type": "类型",
+    "remaining_quota": "剩余额度",
+    "quota_exhausted": "额度已用完。请等待重置或升级套餐。",
+    "resets_at": "{{time}} 重置"
+  },
   "vertex_import": {
     "title": "Vertex JSON 登录",
     "description": "上传 Google 服务账号 JSON，使用 CLI vertex-import 同步规则写入 auth-dir/vertex-<project>.json。",
