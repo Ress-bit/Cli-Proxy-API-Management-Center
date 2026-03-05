@@ -1017,17 +1017,6 @@ const renderKiroItems = (
 
   const nodes: ReactNode[] = [];
 
-  // Profile info row with type badge
-  const profileName = data.profile_arn?.split('/').pop() || data.profile_arn || '-';
-  nodes.push(
-    h(
-      'div',
-      { key: 'profile', className: styleMap.codexPlan },
-      h('span', { className: styleMap.codexPlanValue, title: data.profile_arn }, profileName),
-      h('span', { className: styleMap.typeBadge }, data.resource_type || '-')
-    )
-  );
-
   // Reset time row
   nodes.push(
     h(

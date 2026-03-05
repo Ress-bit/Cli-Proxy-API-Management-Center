@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useNotificationStore, useThemeStore } from '@/stores';
+import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
 import { oauthApi, type OAuthProvider, type IFlowCookieAuthResponse } from '@/services/api/oauth';
 import { vertexApi, type VertexImportResponse } from '@/services/api/vertex';
+import { kiroApi } from '@/services/api/kiro';
 import { copyToClipboard } from '@/utils/clipboard';
 import styles from './OAuthPage.module.scss';
 import iconCodexLight from '@/assets/icons/codex_light.svg';
@@ -18,6 +19,7 @@ import iconKimiDark from '@/assets/icons/kimi-dark.svg';
 import iconQwen from '@/assets/icons/qwen.svg';
 import iconIflow from '@/assets/icons/iflow.svg';
 import iconVertex from '@/assets/icons/vertex.svg';
+import iconKiroUpload from '@/assets/icons/kiro-upload.svg';
 
 interface ProviderState {
   url?: string;
@@ -57,6 +59,29 @@ interface VertexImportState {
   result?: VertexImportResult;
 }
 
+type KiroBuilderState = {
+  status: 'idle' | 'starting' | 'pending' | 'success' | 'failed';
+  authUrl?: string;
+  stateId?: string;
+  remainingSeconds?: number;
+  expiresAt?: string;
+  error?: string;
+};
+
+type KiroImportState = {
+  fileName: string;
+  refreshToken: string;
+  loading: boolean;
+  error?: string;
+  result?: {
+    message?: string;
+    fileName?: string;
+    email?: string;
+  };
+};
+
+const KIRO_POLL_INTERVAL_MS = 3000;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
 }
@@ -70,6 +95,18 @@ function getErrorMessage(error: unknown): string {
 function getErrorStatus(error: unknown): number | undefined {
   if (!isRecord(error)) return undefined;
   return typeof error.status === 'number' ? error.status : undefined;
+}
+
+function parseKiroRefreshTokenFromFile(text: string): string {
+  const payload = JSON.parse(text) as Record<string, unknown>;
+  const candidates = [
+    payload.refreshToken,
+    payload.refresh_token,
+    payload.RefreshToken,
+    payload.token,
+  ];
+  const token = candidates.find((value) => typeof value === 'string' && value.trim().length > 0);
+  return typeof token === 'string' ? token.trim() : '';
 }
 
 const PROVIDERS: { id: OAuthProvider; titleKey: string; hintKey: string; urlLabelKey: string; icon: string | { light: string; dark: string } }[] = [
@@ -93,8 +130,15 @@ const getIcon = (icon: string | { light: string; dark: string }, theme: 'light' 
 export function OAuthPage() {
   const { t } = useTranslation();
   const { showNotification } = useNotificationStore();
+  const apiBase = useAuthStore((state) => state.apiBase);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const [states, setStates] = useState<Record<OAuthProvider, ProviderState>>({} as Record<OAuthProvider, ProviderState>);
+  const [kiroBuilderState, setKiroBuilderState] = useState<KiroBuilderState>({ status: 'idle' });
+  const [kiroImportState, setKiroImportState] = useState<KiroImportState>({
+    fileName: '',
+    refreshToken: '',
+    loading: false,
+  });
   const [iflowCookie, setIflowCookie] = useState<IFlowCookieState>({ cookie: '', loading: false });
   const [vertexState, setVertexState] = useState<VertexImportState>({
     fileName: '',
@@ -102,11 +146,17 @@ export function OAuthPage() {
     loading: false
   });
   const timers = useRef<Record<string, number>>({});
+  const kiroPollTimerRef = useRef<number | null>(null);
+  const kiroFileInputRef = useRef<HTMLInputElement | null>(null);
   const vertexFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const clearTimers = useCallback(() => {
     Object.values(timers.current).forEach((timer) => window.clearInterval(timer));
     timers.current = {};
+    if (kiroPollTimerRef.current) {
+      window.clearInterval(kiroPollTimerRef.current);
+      kiroPollTimerRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -276,6 +326,161 @@ export function OAuthPage() {
         `${t('auth_login.iflow_cookie_start_error')}${message ? ` ${message}` : ''}`,
         'error'
       );
+    }
+  };
+
+  const stopKiroPolling = () => {
+    if (kiroPollTimerRef.current) {
+      window.clearInterval(kiroPollTimerRef.current);
+      kiroPollTimerRef.current = null;
+    }
+  };
+
+  const pollKiroBuilderStatus = async (stateId: string) => {
+    if (!apiBase) return;
+    try {
+      const status = await kiroApi.getOAuthStatus(apiBase, stateId);
+      if (status.status === 'success') {
+        stopKiroPolling();
+        setKiroBuilderState((prev) => ({
+          ...prev,
+          status: 'success',
+          expiresAt: status.expires_at,
+          remainingSeconds: undefined,
+          error: undefined,
+        }));
+        showNotification('Kiro AWS Builder ID login successful', 'success');
+        return;
+      }
+      if (status.status === 'failed') {
+        stopKiroPolling();
+        const errorMsg = status.error || 'Kiro AWS Builder ID login failed';
+        setKiroBuilderState((prev) => ({
+          ...prev,
+          status: 'failed',
+          error: errorMsg,
+          remainingSeconds: undefined,
+        }));
+        showNotification(errorMsg, 'error');
+        return;
+      }
+
+      setKiroBuilderState((prev) => ({
+        ...prev,
+        status: 'pending',
+        remainingSeconds: status.remaining_seconds,
+      }));
+    } catch (err: unknown) {
+      stopKiroPolling();
+      const message = getErrorMessage(err) || 'Failed to check Kiro OAuth status';
+      setKiroBuilderState((prev) => ({
+        ...prev,
+        status: 'failed',
+        error: message,
+        remainingSeconds: undefined,
+      }));
+      showNotification(message, 'error');
+    }
+  };
+
+  const startKiroBuilderAuth = async () => {
+    if (!apiBase) {
+      showNotification('API base URL is not configured', 'error');
+      return;
+    }
+
+    stopKiroPolling();
+    setKiroBuilderState({ status: 'starting' });
+
+    try {
+      const data = await kiroApi.startBuilderId(apiBase);
+      setKiroBuilderState({
+        status: 'pending',
+        authUrl: data.authUrl,
+        stateId: data.stateId,
+        remainingSeconds: data.expiresIn,
+      });
+
+      window.open(data.authUrl, '_blank', 'noopener,noreferrer');
+      kiroPollTimerRef.current = window.setInterval(() => {
+        void pollKiroBuilderStatus(data.stateId);
+      }, KIRO_POLL_INTERVAL_MS);
+      void pollKiroBuilderStatus(data.stateId);
+    } catch (err: unknown) {
+      const message = getErrorMessage(err) || 'Failed to start Kiro OAuth flow';
+      setKiroBuilderState({ status: 'failed', error: message });
+      showNotification(message, 'error');
+    }
+  };
+
+  const handleCopyKiroBuilderUrl = async () => {
+    if (!kiroBuilderState.authUrl) return;
+    const copied = await copyToClipboard(kiroBuilderState.authUrl);
+    showNotification(t(copied ? 'notification.link_copied' : 'notification.copy_failed'), copied ? 'success' : 'error');
+  };
+
+  const handlePickKiroImportFile = () => {
+    kiroFileInputRef.current?.click();
+  };
+
+  const handleKiroImportFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const refreshToken = parseKiroRefreshTokenFromFile(text);
+      if (!refreshToken) {
+        throw new Error('Invalid file: refreshToken not found');
+      }
+      setKiroImportState({
+        fileName: file.name,
+        refreshToken,
+        loading: false,
+      });
+    } catch (err: unknown) {
+      const message = getErrorMessage(err) || 'Failed to parse auth file';
+      setKiroImportState({
+        fileName: file.name,
+        refreshToken: '',
+        loading: false,
+        error: message,
+      });
+      showNotification(message, 'error');
+    }
+  };
+
+  const importKiroAuthFile = async () => {
+    if (!apiBase) {
+      showNotification('API base URL is not configured', 'error');
+      return;
+    }
+    if (!kiroImportState.refreshToken) {
+      showNotification('Please choose a Kiro auth JSON file first', 'warning');
+      return;
+    }
+
+    setKiroImportState((prev) => ({ ...prev, loading: true, error: undefined, result: undefined }));
+    try {
+      const result = await kiroApi.importRefreshToken(apiBase, kiroImportState.refreshToken);
+      if (!result.success) {
+        throw new Error(result.error || 'Import failed');
+      }
+      setKiroImportState((prev) => ({
+        ...prev,
+        loading: false,
+        result: {
+          message: result.message,
+          fileName: result.fileName,
+          email: result.email,
+        },
+      }));
+      showNotification(result.message || 'Kiro auth imported successfully', 'success');
+    } catch (err: unknown) {
+      const message = getErrorMessage(err) || 'Import failed';
+      setKiroImportState((prev) => ({ ...prev, loading: false, error: message }));
+      showNotification(message, 'error');
     }
   };
 
@@ -610,6 +815,95 @@ export function OAuthPage() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        <Card
+          title={
+            <span className={styles.cardTitle}>
+              <img src={iconKiroUpload} alt="" className={styles.cardTitleIcon} />
+              Kiro OAuth
+            </span>
+          }
+          extra={
+            <Button onClick={startKiroBuilderAuth} loading={kiroBuilderState.status === 'starting'}>
+              Start Login
+            </Button>
+          }
+        >
+          <div className={styles.cardContent}>
+            <div className={styles.cardHint}>
+              Login with AWS Builder ID, or import auth file from Kiro IDE.
+            </div>
+
+            {kiroBuilderState.authUrl && (
+              <div className={styles.authUrlBox}>
+                <div className={styles.authUrlLabel}>Authorization URL</div>
+                <div className={styles.authUrlValue}>{kiroBuilderState.authUrl}</div>
+                <div className={styles.authUrlActions}>
+                  <Button variant="secondary" size="sm" onClick={handleCopyKiroBuilderUrl}>
+                    {t('common.copy', { defaultValue: 'Copy' })}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => window.open(kiroBuilderState.authUrl, '_blank', 'noopener,noreferrer')}
+                  >
+                    Open Link
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {kiroBuilderState.status === 'pending' && (
+              <div className="status-badge">
+                Waiting for authorization...
+                {typeof kiroBuilderState.remainingSeconds === 'number' ? ` (${kiroBuilderState.remainingSeconds}s)` : ''}
+              </div>
+            )}
+            {kiroBuilderState.status === 'success' && (
+              <div className="status-badge success">
+                Login successful
+                {kiroBuilderState.expiresAt ? `, token expires at ${kiroBuilderState.expiresAt}` : ''}
+              </div>
+            )}
+            {kiroBuilderState.status === 'failed' && kiroBuilderState.error && (
+              <div className="status-badge error">{kiroBuilderState.error}</div>
+            )}
+
+            <div className={styles.formItem}>
+              <label className={styles.formItemLabel}>Kiro Auth JSON File</label>
+              <div className={styles.filePicker}>
+                <Button variant="secondary" size="sm" onClick={handlePickKiroImportFile}>
+                  Choose JSON File
+                </Button>
+                <div
+                  className={`${styles.fileName} ${kiroImportState.fileName ? '' : styles.fileNamePlaceholder}`.trim()}
+                >
+                  {kiroImportState.fileName || 'No file selected'}
+                </div>
+                <Button variant="secondary" size="sm" onClick={importKiroAuthFile} loading={kiroImportState.loading}>
+                  Import File
+                </Button>
+              </div>
+              <input
+                ref={kiroFileInputRef}
+                type="file"
+                accept=".json,application/json"
+                style={{ display: 'none' }}
+                onChange={handleKiroImportFileChange}
+              />
+            </div>
+
+            {kiroImportState.error && <div className="status-badge error">{kiroImportState.error}</div>}
+            {kiroImportState.result && (
+              <div className={styles.connectionBox}>
+                <div className={styles.connectionLabel}>Import Result</div>
+                {kiroImportState.result.message && <div>{kiroImportState.result.message}</div>}
+                {kiroImportState.result.email && <div>Email: {kiroImportState.result.email}</div>}
+                {kiroImportState.result.fileName && <div>Saved file: {kiroImportState.result.fileName}</div>}
               </div>
             )}
           </div>

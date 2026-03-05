@@ -5,14 +5,36 @@
 import { apiClient } from './client';
 import type { Config } from '@/types';
 import { normalizeConfigResponse } from './transformers';
+import { parse as parseYaml } from 'yaml';
+
+const isNotFoundError = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') return false;
+  const status = (error as { status?: unknown }).status;
+  return status === 404;
+};
 
 export const configApi = {
   /**
    * 获取配置（会进行字段规范化）
    */
   async getConfig(): Promise<Config> {
-    const raw = await apiClient.get('/config');
-    return normalizeConfigResponse(raw);
+    try {
+      const raw = await apiClient.get('/config');
+      return normalizeConfigResponse(raw);
+    } catch (error) {
+      // Newer backend builds expose /config.yaml instead of /config.
+      if (!isNotFoundError(error)) {
+        throw error;
+      }
+
+      const yamlText = await apiClient.get<string>('/config.yaml', {
+        headers: {
+          Accept: 'text/yaml,text/plain,*/*'
+        }
+      });
+      const parsed = typeof yamlText === 'string' ? parseYaml(yamlText) : yamlText;
+      return normalizeConfigResponse(parsed);
+    }
   },
 
   /**
