@@ -14,12 +14,13 @@ import iconCodexDark from '@/assets/icons/codex_drak.svg';
 import iconClaude from '@/assets/icons/claude.svg';
 import iconAntigravity from '@/assets/icons/antigravity.svg';
 import iconGemini from '@/assets/icons/gemini.svg';
+import iconKilo from '@/assets/icons/kilo.svg';
 import iconKimiLight from '@/assets/icons/kimi-light.svg';
 import iconKimiDark from '@/assets/icons/kimi-dark.svg';
 import iconQwen from '@/assets/icons/qwen.svg';
 import iconIflow from '@/assets/icons/iflow.svg';
 import iconVertex from '@/assets/icons/vertex.svg';
-import iconKiroUpload from '@/assets/icons/kiro-upload.svg';
+import iconKiroUpload from '@/assets/icons/kiro.svg';
 
 interface ProviderState {
   url?: string;
@@ -114,6 +115,7 @@ const PROVIDERS: { id: OAuthProvider; titleKey: string; hintKey: string; urlLabe
   { id: 'anthropic', titleKey: 'auth_login.anthropic_oauth_title', hintKey: 'auth_login.anthropic_oauth_hint', urlLabelKey: 'auth_login.anthropic_oauth_url_label', icon: iconClaude },
   { id: 'antigravity', titleKey: 'auth_login.antigravity_oauth_title', hintKey: 'auth_login.antigravity_oauth_hint', urlLabelKey: 'auth_login.antigravity_oauth_url_label', icon: iconAntigravity },
   { id: 'gemini-cli', titleKey: 'auth_login.gemini_cli_oauth_title', hintKey: 'auth_login.gemini_cli_oauth_hint', urlLabelKey: 'auth_login.gemini_cli_oauth_url_label', icon: iconGemini },
+  { id: 'kilo', titleKey: 'auth_login.kilo_oauth_title', hintKey: 'auth_login.kilo_oauth_hint', urlLabelKey: 'auth_login.kilo_oauth_url_label', icon: iconKilo },
   { id: 'kimi', titleKey: 'auth_login.kimi_oauth_title', hintKey: 'auth_login.kimi_oauth_hint', urlLabelKey: 'auth_login.kimi_oauth_url_label', icon: { light: iconKimiLight, dark: iconKimiDark } },
   { id: 'qwen', titleKey: 'auth_login.qwen_oauth_title', hintKey: 'auth_login.qwen_oauth_hint', urlLabelKey: 'auth_login.qwen_oauth_url_label', icon: iconQwen }
 ];
@@ -271,8 +273,8 @@ export function OAuthPage() {
       const errorMessage =
         status === 404
           ? t('auth_login.oauth_callback_upgrade_hint', {
-              defaultValue: 'Please update CLI Proxy API or check the connection.'
-            })
+            defaultValue: 'Please update CLI Proxy API or check the connection.'
+          })
           : message || undefined;
       updateProviderState(provider, {
         callbackSubmitting: false,
@@ -694,9 +696,8 @@ export function OAuthPage() {
                   {t('vertex_import.choose_file')}
                 </Button>
                 <div
-                  className={`${styles.fileName} ${
-                    vertexState.fileName ? '' : styles.fileNamePlaceholder
-                  }`.trim()}
+                  className={`${styles.fileName} ${vertexState.fileName ? '' : styles.fileNamePlaceholder
+                    }`.trim()}
                 >
                   {vertexState.fileName || t('vertex_import.file_placeholder')}
                 </div>

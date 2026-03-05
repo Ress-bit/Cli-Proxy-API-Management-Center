@@ -57,6 +57,7 @@ export const OAUTH_CARD_IDS = [
   'anthropic-oauth-card',
   'antigravity-oauth-card',
   'gemini-cli-oauth-card',
+  'kilo-oauth-card',
   'kimi-oauth-card',
   'qwen-oauth-card'
 ];
@@ -65,6 +66,7 @@ export const OAUTH_PROVIDERS = {
   ANTHROPIC: 'anthropic',
   ANTIGRAVITY: 'antigravity',
   GEMINI_CLI: 'gemini-cli',
+  KILO: 'kilo',
   KIMI: 'kimi',
   QWEN: 'qwen'
 } as const;
