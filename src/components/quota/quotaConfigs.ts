@@ -1017,37 +1017,24 @@ const renderKiroItems = (
 
   const nodes: ReactNode[] = [];
 
-  // Profile ARN info
+  // Profile info row with type badge
+  const profileName = data.profile_arn?.split('/').pop() || data.profile_arn || '-';
   nodes.push(
     h(
       'div',
       { key: 'profile', className: styleMap.codexPlan },
-      h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.profile_arn')),
-      h(
-        'span',
-        { className: styleMap.codexPlanValue, title: data.profile_arn },
-        data.profile_arn.split('/').pop() || data.profile_arn
-      )
+      h('span', { className: styleMap.codexPlanValue, title: data.profile_arn }, profileName),
+      h('span', { className: styleMap.typeBadge }, data.resource_type || '-')
     )
   );
 
-  // Email info
+  // Reset time row
   nodes.push(
     h(
       'div',
-      { key: 'email', className: styleMap.codexPlan },
-      h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.email')),
-      h('span', { className: styleMap.codexPlanValue }, data.email)
-    )
-  );
-
-  // Resource type
-  nodes.push(
-    h(
-      'div',
-      { key: 'resource', className: styleMap.codexPlan },
-      h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.resource_type')),
-      h('span', { className: styleMap.codexPlanValue }, data.resource_type)
+      { key: 'reset', className: styleMap.codexPlan },
+      h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.next_reset')),
+      h('span', { className: styleMap.codexPlanValue }, resetLabel)
     )
   );
 
@@ -1067,9 +1054,8 @@ const renderKiroItems = (
           h(
             'span',
             { className: styleMap.quotaAmount },
-            `${data.current_usage.toFixed(2)} / ${data.total_limit} ${data.resource_type === 'CREDIT' ? '$' : ''}`
-          ),
-          h('span', { className: styleMap.quotaReset }, resetLabel)
+            `${(data.current_usage ?? 0).toFixed(2)} / ${data.total_limit ?? 0}`
+          )
         )
       ),
       h(QuotaProgressBar, { percent: remainingPercent, highThreshold: 60, mediumThreshold: 20 })

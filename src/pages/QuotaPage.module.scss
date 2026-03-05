@@ -147,7 +147,6 @@
     white-space: nowrap;
   }
 }
-}
 
 .viewModeToggle {
   display: flex;
@@ -172,15 +171,11 @@
 }
 
 .kimiCard {
-  background-image: linear-gradient(180deg,
-      rgba(255, 244, 229, 0.2),
-      rgba(255, 244, 229, 0));
+  background-image: linear-gradient(180deg, rgba(255, 244, 229, 0.2), rgba(255, 244, 229, 0));
 }
 
 .kiroCard {
-  background-image: linear-gradient(180deg,
-      rgba(237, 233, 254, 0.2),
-      rgba(237, 233, 254, 0));
+  background-image: linear-gradient(180deg, rgba(237, 233, 254, 0.2), rgba(237, 233, 254, 0));
 }
 
 .quotaSection {

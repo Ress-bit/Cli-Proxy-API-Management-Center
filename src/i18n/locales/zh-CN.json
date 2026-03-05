@@ -649,7 +649,8 @@
     "profile_arn": "配置文件",
     "email": "邮箱",
     "resource_type": "类型",
-    "remaining_quota": "剩余额度",
+    "next_reset": "重置时间",
+    "remaining_quota": "信用额度",
     "quota_exhausted": "额度已用完。请等待重置或升级套餐。",
     "resets_at": "{{time}} 重置"
   },

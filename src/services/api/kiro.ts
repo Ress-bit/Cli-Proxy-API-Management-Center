@@ -14,7 +14,7 @@ export const kiroApi = {
    */
   getQuota: (authIndex?: string) => {
     const params = authIndex ? `?auth_index=${encodeURIComponent(authIndex)}` : '';
-    return apiClient.get<KiroQuotaPayload>(`/v0/management/kiro-quota${params}`, {
+    return apiClient.get<KiroQuotaPayload>(`/kiro-quota${params}`, {
       timeout: KIRO_TIMEOUT_MS,
     });
   },

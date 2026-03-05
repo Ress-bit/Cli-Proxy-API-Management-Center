@@ -199,4 +199,4 @@ export const KIMI_REQUEST_HEADERS = {
 };
 
 // Kiro API configuration (server-side endpoint)
-export const KIRO_QUOTA_URL = '/v0/management/kiro-quota';
+export const KIRO_QUOTA_URL = '/kiro-quota';

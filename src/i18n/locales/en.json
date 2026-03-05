@@ -649,7 +649,8 @@
     "profile_arn": "Profile",
     "email": "Email",
     "resource_type": "Type",
-    "remaining_quota": "Remaining Quota",
+    "next_reset": "Resets at",
+    "remaining_quota": "Credit Quota",
     "quota_exhausted": "Quota exhausted. Please wait for reset or upgrade your plan.",
     "resets_at": "Resets at {{time}}"
   },

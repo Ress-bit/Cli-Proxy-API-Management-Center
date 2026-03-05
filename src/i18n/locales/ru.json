@@ -652,7 +652,8 @@
     "profile_arn": "Профиль",
     "email": "Email",
     "resource_type": "Тип",
-    "remaining_quota": "Оставшаяся квота",
+    "next_reset": "Сброс в",
+    "remaining_quota": "Кредитная квота",
     "quota_exhausted": "Квота исчерпана. Дождитесь сброса или обновите план.",
     "resets_at": "Сброс в {{time}}"
   },
