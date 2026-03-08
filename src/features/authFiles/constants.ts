@@ -17,10 +17,11 @@ export type AuthFileModelItem = {
   owned_by?: string;
 };
 
-export type QuotaProviderType = 'antigravity' | 'codex' | 'gemini-cli' | 'kimi' | 'kiro';
+export type QuotaProviderType = 'antigravity' | 'claude' | 'codex' | 'gemini-cli' | 'kimi' | 'kiro';
 
 export const QUOTA_PROVIDER_TYPES = new Set<QuotaProviderType>([
   'antigravity',
+  'claude',
   'codex',
   'gemini-cli',
   'kimi',
@@ -101,6 +102,16 @@ export const resolveQuotaErrorMessage = (
 };
 
 export const normalizeProviderKey = (value: string) => value.trim().toLowerCase();
+
+export const getAuthFileStatusMessage = (file: AuthFileItem): string => {
+  const raw = file['status_message'] ?? file.statusMessage;
+  if (typeof raw === 'string') return raw.trim();
+  if (raw == null) return '';
+  return String(raw).trim();
+};
+
+export const hasAuthFileStatusMessage = (file: AuthFileItem): boolean =>
+  getAuthFileStatusMessage(file).length > 0;
 
 export const getTypeLabel = (t: TFunction, type: string): string => {
   const key = `auth_files.filter_${type}`;
