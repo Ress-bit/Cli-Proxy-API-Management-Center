@@ -1210,7 +1210,6 @@ export const GEMINI_CLI_CONFIG: QuotaConfig<
   fetchQuota: fetchGeminiCliQuota,
   storeSelector: (state) => state.geminiCliQuota,
   storeSetter: 'setGeminiCliQuota',
-<<<<<<< HEAD
   buildLoadingState: () => ({ status: 'loading', buckets: [], tierLabel: null, tierId: null, creditBalance: null }),
   buildSuccessState: (data) => {
     const supplementarySnapshot = readGeminiCliSupplementarySnapshot(
@@ -1364,47 +1363,106 @@ const renderKiroItems = (
     return h('div', { className: styleMap.quotaMessage }, t('kiro_quota.empty_data'));
   }
 
-  const remainingPercent = Math.max(
-    0,
-    Math.min(100, Math.round((data.remaining_quota / data.total_limit) * 100))
-  );
-  const resetLabel = formatQuotaResetTime(data.next_reset);
+  const breakdowns = data?.breakdowns ?? [];
+  const planLabel = data.subscription_info?.title ?? data.subscription_info?.type ?? null;
 
   const nodes: ReactNode[] = [];
 
-  // Reset time row
-  nodes.push(
-    h(
-      'div',
-      { key: 'reset', className: styleMap.codexPlan },
-      h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.next_reset')),
-      h('span', { className: styleMap.codexPlanValue }, resetLabel)
-    )
-  );
-
-  // Main quota bar
-  nodes.push(
-    h(
-      'div',
-      { key: 'quota', className: styleMap.quotaRow },
+  if (planLabel) {
+    nodes.push(
       h(
         'div',
-        { className: styleMap.quotaRowHeader },
-        h('span', { className: styleMap.quotaModel }, t('kiro_quota.remaining_quota')),
+        { key: 'plan', className: styleMap.codexPlan },
+        h('span', { className: styleMap.codexPlanLabel }, t('kiro_quota.plan_label')),
+        h('span', { className: styleMap.codexPlanValue }, planLabel)
+      )
+    );
+  }
+
+  if (breakdowns.length > 0) {
+    breakdowns.forEach((entry) => {
+      const limitValue = entry.limit ?? 0;
+      const remainingValue = entry.remaining ?? 0;
+      const remainingPercent =
+        limitValue > 0
+          ? Math.min(100, Math.max(0, Math.round((remainingValue / limitValue) * 100)))
+          : null;
+      const dateValue = entry.is_free_trial ? entry.expires_at ?? entry.next_reset : entry.next_reset;
+      const dateLabel = dateValue ? formatQuotaResetTime(dateValue) : null;
+      const amountLabel =
+        limitValue > 0
+          ? `${remainingValue.toFixed(2)} / ${limitValue.toFixed(2)}`
+          : remainingValue > 0
+            ? remainingValue.toFixed(2)
+            : null;
+
+      nodes.push(
         h(
           'div',
-          { className: styleMap.quotaMeta },
-          h('span', { className: styleMap.quotaPercent }, `${remainingPercent}%`),
+          { key: `breakdown-${entry.id}`, className: styleMap.quotaRow },
           h(
-            'span',
-            { className: styleMap.quotaAmount },
-            `${(data.current_usage ?? 0).toFixed(2)} / ${data.total_limit ?? 0}`
-          )
+            'div',
+            { className: styleMap.quotaRowHeader },
+            h('span', { className: styleMap.quotaModel }, entry.label),
+            h(
+              'div',
+              { className: styleMap.quotaMeta },
+              h(
+                'span',
+                { className: styleMap.quotaPercent },
+                remainingPercent === null ? '--' : `${remainingPercent}%`
+              ),
+              amountLabel ? h('span', { className: styleMap.quotaAmount }, amountLabel) : null,
+              dateLabel ? h('span', { className: styleMap.quotaReset }, dateLabel) : null
+            )
+          ),
+          h(QuotaProgressBar, {
+            percent: remainingPercent,
+            highThreshold: 80,
+            mediumThreshold: 50,
+          })
         )
-      ),
-      h(QuotaProgressBar, { percent: remainingPercent, highThreshold: 60, mediumThreshold: 20 })
-    )
-  );
+      );
+    });
+  } else {
+    const limitValue = data.total_limit ?? 0;
+    const remainingValue = data.remaining_quota ?? 0;
+    const remainingPercent =
+      limitValue > 0
+        ? Math.min(100, Math.max(0, Math.round((remainingValue / limitValue) * 100)))
+        : null;
+    const resetLabel = data.next_reset ? formatQuotaResetTime(data.next_reset) : null;
+    const amountLabel =
+      limitValue > 0
+        ? `${remainingValue.toFixed(2)} / ${limitValue.toFixed(2)}`
+        : remainingValue > 0
+          ? remainingValue.toFixed(2)
+          : null;
+
+    nodes.push(
+      h(
+        'div',
+        { key: 'quota', className: styleMap.quotaRow },
+        h(
+          'div',
+          { className: styleMap.quotaRowHeader },
+          h('span', { className: styleMap.quotaModel }, t('kiro_quota.remaining_quota')),
+          h(
+            'div',
+            { className: styleMap.quotaMeta },
+            h(
+              'span',
+              { className: styleMap.quotaPercent },
+              remainingPercent === null ? '--' : `${remainingPercent}%`
+            ),
+            amountLabel ? h('span', { className: styleMap.quotaAmount }, amountLabel) : null,
+            resetLabel ? h('span', { className: styleMap.quotaReset }, resetLabel) : null
+          )
+        ),
+        h(QuotaProgressBar, { percent: remainingPercent, highThreshold: 80, mediumThreshold: 50 })
+      )
+    );
+  }
 
   // Exhausted warning
   if (data.is_exhausted) {

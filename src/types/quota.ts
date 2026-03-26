@@ -309,16 +309,33 @@ export interface KimiQuotaState {
 
 // Kiro API payload types
 export interface KiroQuotaPayload {
-  auth_index: string;
-  email: string;
-  profile_arn: string;
-  total_limit: number;
-  current_usage: number;
-  remaining_quota: number;
-  is_exhausted: boolean;
-  resource_type: 'CREDIT' | 'AGENTIC_REQUEST';
-  next_reset: string;
-  usage_percentage: number;
+	auth_index: string;
+	email: string;
+	profile_arn: string;
+	total_limit: number;
+	current_usage: number;
+	remaining_quota: number;
+	is_exhausted: boolean;
+	resource_type: 'CREDIT' | 'AGENTIC_REQUEST';
+	breakdowns?: KiroQuotaBreakdown[];
+	subscription_info?: {
+		title?: string;
+		type?: string;
+	};
+	next_reset: string;
+	usage_percentage: number;
+}
+
+export interface KiroQuotaBreakdown {
+	id: string;
+	label: string;
+	resource_type: string;
+	limit: number;
+	current_usage: number;
+	remaining: number;
+	is_free_trial: boolean;
+	expires_at?: string;
+	next_reset?: string;
 }
 
 export interface KiroQuotaState {
