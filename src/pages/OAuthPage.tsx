@@ -12,6 +12,7 @@ import styles from './OAuthPage.module.scss';
 import iconCodex from '@/assets/icons/codex.svg';
 import iconClaude from '@/assets/icons/claude.svg';
 import iconAntigravity from '@/assets/icons/antigravity.svg';
+import iconCodeBuddy from '@/assets/icons/codebuddy.svg';
 import iconGemini from '@/assets/icons/gemini.svg';
 import iconKilo from '@/assets/icons/kilo.svg';
 import iconKimiLight from '@/assets/icons/kimi-light.svg';
@@ -113,6 +114,7 @@ const PROVIDERS: { id: OAuthProvider; titleKey: string; hintKey: string; urlLabe
   { id: 'codex', titleKey: 'auth_login.codex_oauth_title', hintKey: 'auth_login.codex_oauth_hint', urlLabelKey: 'auth_login.codex_oauth_url_label', icon: iconCodex },
   { id: 'anthropic', titleKey: 'auth_login.anthropic_oauth_title', hintKey: 'auth_login.anthropic_oauth_hint', urlLabelKey: 'auth_login.anthropic_oauth_url_label', icon: iconClaude },
   { id: 'antigravity', titleKey: 'auth_login.antigravity_oauth_title', hintKey: 'auth_login.antigravity_oauth_hint', urlLabelKey: 'auth_login.antigravity_oauth_url_label', icon: iconAntigravity },
+  { id: 'codebuddy', titleKey: 'auth_login.codebuddy_oauth_title', hintKey: 'auth_login.codebuddy_oauth_hint', urlLabelKey: 'auth_login.codebuddy_oauth_url_label', icon: iconCodeBuddy },
   { id: 'gemini-cli', titleKey: 'auth_login.gemini_cli_oauth_title', hintKey: 'auth_login.gemini_cli_oauth_hint', urlLabelKey: 'auth_login.gemini_cli_oauth_url_label', icon: iconGemini },
   { id: 'kilo', titleKey: 'auth_login.kilo_oauth_title', hintKey: 'auth_login.kilo_oauth_hint', urlLabelKey: 'auth_login.kilo_oauth_url_label', icon: iconKilo },
   { id: 'kimi', titleKey: 'auth_login.kimi_oauth_title', hintKey: 'auth_login.kimi_oauth_hint', urlLabelKey: 'auth_login.kimi_oauth_url_label', icon: { light: iconKimiLight, dark: iconKimiDark } },

@@ -1,6 +1,7 @@
 import type { TFunction } from 'i18next';
 import iconAntigravity from '@/assets/icons/antigravity.svg';
 import iconClaude from '@/assets/icons/claude.svg';
+import iconCodeBuddy from '@/assets/icons/codebuddy.svg';
 import iconCodex from '@/assets/icons/codex.svg';
 import iconGemini from '@/assets/icons/gemini.svg';
 import iconIflow from '@/assets/icons/iflow.svg';
@@ -88,6 +89,10 @@ export const TYPE_COLORS: Record<string, TypeColorSet> = {
     light: { bg: '#e0f7fa', text: '#006064' },
     dark: { bg: '#004d40', text: '#80deea' },
   },
+  codebuddy: {
+    light: { bg: '#e8f2ff', text: '#1e5bb8' },
+    dark: { bg: '#17396d', text: '#9fc4ff' },
+  },
   // iFlow logo: 品红紫渐变 #5C5CFF → #AE5CFF，偏品红以区别于 Qwen 的紫罗兰
   iflow: {
     light: { bg: '#f5e3fc', text: '#9025c8' },
@@ -112,6 +117,7 @@ export const AUTH_FILE_ICONS: Record<string, AuthFileIconAsset> = {
   antigravity: iconAntigravity,
   aistudio: iconGemini,
   claude: iconClaude,
+  codebuddy: iconCodeBuddy,
   codex: iconCodex,
   gemini: iconGemini,
   'gemini-cli': iconGemini,
