@@ -18,8 +18,9 @@ import {
 } from '@/components/ui/icons';
 import { VisualConfigEditor } from '@/components/config/VisualConfigEditor';
 import { DiffModal } from '@/components/config/DiffModal';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useVisualConfig } from '@/hooks/useVisualConfig';
-import { useNotificationStore, useAuthStore, useThemeStore } from '@/stores';
+import { useNotificationStore, useAuthStore, useThemeStore, useConfigStore } from '@/stores';
 import { configFileApi } from '@/services/api/configFile';
 import styles from './ConfigPage.module.scss';
 
@@ -43,6 +44,7 @@ export function ConfigPage() {
   const showConfirmation = useNotificationStore((state) => state.showConfirmation);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const {
     visualValues,
@@ -137,6 +139,24 @@ export function ConfigPage() {
       setServerYaml(latestContent);
       setMergedYaml(latestContent);
       loadVisualValuesFromYaml(latestContent);
+
+      // Keep the global config store in sync so sidebar / other pages reflect YAML changes immediately.
+      try {
+        useConfigStore.getState().clearCache();
+        await useConfigStore.getState().fetchConfig(undefined, true);
+      } catch (refreshError: unknown) {
+        const message =
+          refreshError instanceof Error
+            ? refreshError.message
+            : typeof refreshError === 'string'
+              ? refreshError
+              : '';
+        showNotification(
+          `${t('notification.refresh_failed')}${message ? `: ${message}` : ''}`,
+          'error'
+        );
+      }
+
       showNotification(t('config_management.save_success'), 'success');
       if (commercialModeChanged) {
         showNotification(t('notification.commercial_mode_restart_required'), 'warning');
@@ -411,6 +431,21 @@ export function ConfigPage() {
     return '';
   };
 
+  const getFloatingStatusText = () => {
+    if (!isMobile) return getStatusText();
+    if (disableControls)
+      return t('config_management.status_disconnected_short', { defaultValue: 'Disconnected' });
+    if (loading) return t('config_management.status_loading_short', { defaultValue: 'Loading' });
+    if (error) return t('config_management.status_load_failed_short', { defaultValue: 'Failed' });
+    if (hasVisualModeError)
+      return t('config_management.visual_mode_unavailable_short', { defaultValue: 'YAML issue' });
+    if (hasVisualValidationErrors)
+      return t('config_management.visual.validation_blocked_short', { defaultValue: 'Fix errors' });
+    if (saving) return t('config_management.status_saving_short', { defaultValue: 'Saving' });
+    if (isDirty) return t('config_management.status_dirty_short', { defaultValue: 'Unsaved' });
+    return t('config_management.status_loaded_short', { defaultValue: 'Loaded' });
+  };
+
   const handleReload = useCallback(() => {
     if (!isDirty) {
       void loadConfig();
@@ -432,7 +467,13 @@ export function ConfigPage() {
   const floatingActions = (
     <div className={styles.floatingActionContainer} ref={floatingActionsRef}>
       <div className={styles.floatingActionList}>
-        <div className={`${styles.floatingStatus} ${getStatusClass()}`}>{getStatusText()}</div>
+        <div
+          className={`${styles.floatingStatus} ${
+            isMobile ? styles.floatingStatusCompact : ''
+          } ${getStatusClass()}`}
+        >
+          {getFloatingStatusText()}
+        </div>
         <button
           type="button"
           className={styles.floatingActionButton}

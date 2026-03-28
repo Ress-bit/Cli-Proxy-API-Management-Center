@@ -88,6 +88,8 @@ type QuotaUpdater<T> = T | ((prev: T) => T);
 type QuotaType = 'antigravity' | 'claude' | 'codex' | 'gemini-cli' | 'kimi' | 'kiro';
 
 const DEFAULT_ANTIGRAVITY_PROJECT_ID = 'bamboo-precept-lgxtn';
+const QUOTA_PROGRESS_HIGH_THRESHOLD = 70;
+const QUOTA_PROGRESS_MEDIUM_THRESHOLD = 30;
 const geminiCliSupplementaryRequestIds = new Map<string, number>();
 const geminiCliSupplementaryCache = new Map<
   string,
@@ -734,7 +736,11 @@ const renderAntigravityItems = (
           h('span', { className: styleMap.quotaReset }, resetLabel)
         )
       ),
-      h(QuotaProgressBar, { percent, highThreshold: 60, mediumThreshold: 20 })
+      h(QuotaProgressBar, {
+        percent,
+        highThreshold: QUOTA_PROGRESS_HIGH_THRESHOLD,
+        mediumThreshold: QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+      })
     );
   });
 };
@@ -808,7 +814,11 @@ const renderCodexItems = (
             h('span', { className: styleMap.quotaReset }, window.resetLabel)
           )
         ),
-        h(QuotaProgressBar, { percent: remaining, highThreshold: 80, mediumThreshold: 50 })
+        h(QuotaProgressBar, {
+          percent: remaining,
+          highThreshold: QUOTA_PROGRESS_HIGH_THRESHOLD,
+          mediumThreshold: QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+        })
       );
     })
   );
@@ -903,7 +913,11 @@ const renderGeminiCliItems = (
             h('span', { className: styleMap.quotaReset }, resetLabel)
           )
         ),
-        h(QuotaProgressBar, { percent, highThreshold: 60, mediumThreshold: 20 })
+        h(QuotaProgressBar, {
+          percent,
+          highThreshold: QUOTA_PROGRESS_HIGH_THRESHOLD,
+          mediumThreshold: QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+        })
       );
     })
   );
@@ -1099,7 +1113,11 @@ const renderClaudeItems = (
             h('span', { className: styleMap.quotaReset }, window.resetLabel)
           )
         ),
-        h(QuotaProgressBar, { percent: remaining, highThreshold: 80, mediumThreshold: 50 })
+        h(QuotaProgressBar, {
+          percent: remaining,
+          highThreshold: QUOTA_PROGRESS_HIGH_THRESHOLD,
+          mediumThreshold: QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+        })
       );
     })
   );
@@ -1307,7 +1325,11 @@ const renderKimiItems = (
           resetLabel ? h('span', { className: styleMap.quotaReset }, resetLabel) : null
         )
       ),
-      h(QuotaProgressBar, { percent: remaining, highThreshold: 60, mediumThreshold: 20 })
+      h(QuotaProgressBar, {
+        percent: remaining,
+        highThreshold: QUOTA_PROGRESS_HIGH_THRESHOLD,
+        mediumThreshold: QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+      })
     );
   });
 };
