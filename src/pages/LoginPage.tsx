@@ -182,15 +182,6 @@ export function LoginPage() {
 
   return (
     <div className={styles.container}>
-      {/* 左侧品牌展示区 */}
-      <div className={styles.brandPanel}>
-        <div className={styles.brandContent}>
-          <span className={styles.brandWord}>CLI</span>
-          <span className={styles.brandWord}>PROXY</span>
-          <span className={styles.brandWord}>API</span>
-        </div>
-      </div>
-
       {/* 右侧功能交互区 */}
       <div className={styles.formPanel}>
         {showSplash ? (
