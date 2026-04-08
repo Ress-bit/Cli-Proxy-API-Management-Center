@@ -179,43 +179,64 @@ export function LoginPage() {
   // 显示启动动画（自动登录中或自动登录成功）
   const showSplash = autoLoading || autoLoginSuccess;
 
-  return (
-        <div className={styles.container}>
-      <div className={styles.ambientOrb1} />
-      <div className={styles.ambientOrb2} />
-      <div className={styles.ambientOrb3} />
-      {/* 右侧功能交互区 */}
+    return (
+    <div className={styles.container}>
+      <div className={styles.decorativePanel}>
+        <div className={styles.decorativeContent}>
+          <div className={styles.decorativeIcon}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <h2 className={styles.decorativeTitle}>{t('title.login', { defaultValue: 'Welcome Back' })}</h2>
+          <p className={styles.decorativeSubtitle}>
+            Securely connect and manage your CLI Proxy API configurations with ease.
+          </p>
+          <div className={styles.floatingShapes}>
+            <div className={styles.shape1}></div>
+            <div className={styles.shape2}></div>
+            <div className={styles.shape3}></div>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.formPanel}>
         {showSplash ? (
-          /* 启动动画 */
           <div className={styles.splashContent}>
             <div className={styles.splashLoader}>
               <div className={styles.splashLoaderBar} />
             </div>
           </div>
         ) : (
-          /* 登录表单 */
           <div className={styles.formContent}>
-            {/* 登录表单卡片 */}
-            <div className={styles.loginCard}>
-              <div className={styles.loginHeader}>
-                <div className={styles.titleRow}>
-                  <div className={styles.title}>{t('title.login')}</div>
-                  <Select
-                    className={styles.languageSelect}
-                    value={language}
-                    options={languageOptions}
-                    onChange={handleLanguageChange}
-                    fullWidth={false}
-                    ariaLabel={t('language.switch')}
-                  />
-                </div>
-                <div className={styles.subtitle}>{t('login.subtitle')}</div>
+            <div className={styles.loginHeader}>
+              <div className={styles.titleRow}>
+                <div className={styles.title}>{t('title.login')}</div>
+                <Select
+                  className={styles.languageSelect}
+                  value={language}
+                  options={languageOptions}
+                  onChange={handleLanguageChange}
+                  fullWidth={false}
+                  ariaLabel={t('language.switch')}
+                />
               </div>
+              <div className={styles.subtitle}>{t('login.subtitle')}</div>
+            </div>
 
+            <div className={styles.formGroup}>
               <div className={styles.connectionBox}>
-                <div className={styles.label}>{t('login.connection_current')}</div>
-                <div className={styles.value}>{apiBase || detectedBase}</div>
+                <div className={styles.connectionHeader}>
+                  <div className={styles.connectionStatus}>
+                    <span className={styles.statusDot}></span>
+                    <span className={styles.label}>{t('login.connection_current')}</span>
+                  </div>
+                  <span className={styles.value} title={apiBase || detectedBase}>
+                    {apiBase || detectedBase}
+                  </span>
+                </div>
                 <div className={styles.hint}>{t('login.connection_auto_hint')}</div>
               </div>
 
@@ -230,43 +251,49 @@ export function LoginPage() {
               </div>
 
               {showCustomBase && (
-                <Input
-                  label={t('login.custom_connection_label')}
-                  placeholder={t('login.custom_connection_placeholder')}
-                  value={apiBase}
-                  onChange={(e) => setApiBase(e.target.value)}
-                  hint={t('login.custom_connection_hint')}
-                />
+                <div className={styles.inputWrapper}>
+                  <Input
+                    label={t('login.custom_connection_label')}
+                    placeholder={t('login.custom_connection_placeholder')}
+                    value={apiBase}
+                    onChange={(e) => setApiBase(e.target.value)}
+                    hint={t('login.custom_connection_hint')}
+                  />
+                </div>
               )}
+            </div>
 
-              <Input
-                autoFocus
-                label={t('login.management_key_label')}
-                placeholder={t('login.management_key_placeholder')}
-                type={showKey ? 'text' : 'password'}
-                value={managementKey}
-                onChange={(e) => setManagementKey(e.target.value)}
-                onKeyDown={handleSubmitKeyDown}
-                rightElement={
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => setShowKey((prev) => !prev)}
-                    aria-label={
-                      showKey
-                        ? t('login.hide_key', { defaultValue: '隐藏密钥' })
-                        : t('login.show_key', { defaultValue: '显示密钥' })
-                    }
-                    title={
-                      showKey
-                        ? t('login.hide_key', { defaultValue: '隐藏密钥' })
-                        : t('login.show_key', { defaultValue: '显示密钥' })
-                    }
-                  >
-                    {showKey ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-                  </button>
-                }
-              />
+            <div className={styles.formGroup}>
+              <div className={styles.inputWrapper}>
+                <Input
+                  autoFocus
+                  label={t('login.management_key_label')}
+                  placeholder={t('login.management_key_placeholder')}
+                  type={showKey ? 'text' : 'password'}
+                  value={managementKey}
+                  onChange={(e) => setManagementKey(e.target.value)}
+                  onKeyDown={handleSubmitKeyDown}
+                  rightElement={
+                    <button
+                      type="button"
+                      className={styles.passwordToggle}
+                      onClick={() => setShowKey((prev) => !prev)}
+                      aria-label={
+                        showKey
+                          ? t('login.hide_key', { defaultValue: '隐藏密钥' })
+                          : t('login.show_key', { defaultValue: '显示密钥' })
+                      }
+                      title={
+                        showKey
+                          ? t('login.hide_key', { defaultValue: '隐藏密钥' })
+                          : t('login.show_key', { defaultValue: '显示密钥' })
+                      }
+                    >
+                      {showKey ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                    </button>
+                  }
+                />
+              </div>
 
               <div className={styles.toggleAdvanced}>
                 <SelectionCheckbox
@@ -277,13 +304,27 @@ export function LoginPage() {
                   labelClassName={styles.toggleLabel}
                 />
               </div>
-
-              <Button fullWidth onClick={handleSubmit} loading={loading}>
-                {loading ? t('login.submitting') : t('login.submit_button')}
-              </Button>
-
-              {error && <div className={styles.errorBox}>{error}</div>}
             </div>
+
+            {error && (
+              <div className={styles.errorBox}>
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={styles.errorIcon}>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <Button 
+              className={styles.submitButton}
+              fullWidth 
+              onClick={handleSubmit} 
+              loading={loading}
+            >
+              {loading ? t('login.submitting') : t('login.submit_button')}
+            </Button>
           </div>
         )}
       </div>
