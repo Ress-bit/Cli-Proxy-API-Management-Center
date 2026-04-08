@@ -180,7 +180,10 @@ export function LoginPage() {
   const showSplash = autoLoading || autoLoginSuccess;
 
   return (
-    <div className={styles.container}>
+        <div className={styles.container}>
+      <div className={styles.ambientOrb1} />
+      <div className={styles.ambientOrb2} />
+      <div className={styles.ambientOrb3} />
       {/* 右侧功能交互区 */}
       <div className={styles.formPanel}>
         {showSplash ? (

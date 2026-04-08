@@ -1,27 +1,72 @@
 @use '../styles/variables.scss' as *;
 
-// Modern, minimal, professional layout
 .container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-primary);
+  background: #050505; // Deep dark background
   position: relative;
   overflow: hidden;
   font-family: $font-family;
-
-  // Minimal aesthetic noise background
-  &::before {
+  
+  // High-end grid overlay
+  &::after {
     content: '';
     position: absolute;
     inset: 0;
     background-image: 
-      radial-gradient(var(--border-color) 1px, transparent 1px);
-    background-size: 24px 24px;
-    opacity: 0.4;
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
     pointer-events: none;
+    z-index: 1;
   }
+}
+
+// Ambient Orbs for glowing background
+.ambientOrb1, .ambientOrb2, .ambientOrb3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  opacity: 0.5;
+  animation: float 20s infinite ease-in-out;
+}
+
+.ambientOrb1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(120, 110, 220, 0.2) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.ambientOrb2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(60, 180, 220, 0.15) 0%, transparent 70%);
+  bottom: -150px;
+  left: -100px;
+  animation-delay: -5s;
+}
+
+.ambientOrb3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(200, 80, 150, 0.1) 0%, transparent 70%);
+  top: 30%;
+  left: 40%;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
 }
 
 .formPanel {
@@ -42,125 +87,171 @@
 
 .formContent {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: formFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: formFadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes formFadeIn {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(24px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
+// Glassmorphism Premium Card
 .loginCard {
   width: 100%;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-  padding: 48px 40px;
+  background: rgba(20, 20, 22, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 24px 64px -12px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(120, 110, 220, 0.05);
+  padding: 48px;
   display: flex;
   flex-direction: column;
   gap: $spacing-xl;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  position: relative;
+  overflow: hidden;
   
+  // Premium highlight line at the top
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    opacity: 0.5;
+  }
+
   @media (max-width: $breakpoint-mobile) {
-    padding: $spacing-lg;
-    box-shadow: none;
-    border: none;
-    background: transparent;
+    padding: 32px 24px;
+    background: rgba(20, 20, 22, 0.8);
   }
 }
 
 .loginHeader {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
+  gap: 12px;
   text-align: left;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .titleRow {
   display: flex;
   align-items: center;
-  justify-content: space-between; // Space between title and lang select
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: $spacing-sm;
 }
 
 .title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 15px;
   font-weight: 400;
+  line-height: 1.5;
 }
 
 .languageSelect {
-  min-width: 100px;
+  min-width: 110px;
   flex: 0 0 auto;
   
-  // Make lang select more subtle
   :global(.select-trigger) {
-    border-color: transparent;
-    background: transparent;
-    height: 32px;
-    padding: 0 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    height: 36px;
+    padding: 0 12px;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 13px;
+    transition: all 0.2s ease;
     
     &:hover {
-      background: var(--bg-secondary);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
     }
   }
 }
 
+// Connection Box (Cyberpunk aesthetic)
 .connectionBox {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: border-color 0.2s ease;
+  gap: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--primary-color);
+    border-radius: 0 4px 4px 0;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, height 0.3s ease;
+  }
 
   &:hover {
-    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    &::after {
+      opacity: 1;
+      height: 80%;
+    }
   }
 
   .label {
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.4);
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
+    letter-spacing: 0.1em;
+    font-weight: 700;
   }
 
   .value {
     font-weight: 500;
-    color: var(--text-primary);
+    color: #ffffff;
     word-break: break-all;
     font-family: $font-mono;
-    font-size: 13px;
-    padding: 4px 0;
+    font-size: 14px;
+    padding: 2px 0;
   }
 
   .hint {
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.3);
     font-size: 12px;
-    opacity: 0.7;
   }
 }
 
@@ -171,23 +262,31 @@
 }
 
 .toggleLabel {
-  color: var(--text-primary);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   user-select: none;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #ffffff;
+  }
 }
 
+// Error box styling
 .errorBox {
-  background: rgba($error-color, 0.05);
-  border-left: 3px solid $error-color;
-  border-radius: 4px;
-  padding: 12px 16px;
-  color: $error-color;
+  background: rgba($error-color, 0.1);
+  border: 1px solid rgba($error-color, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: #ff8a8a;
   font-size: 13px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  backdrop-filter: blur(8px);
 }
 
 @keyframes shake {
@@ -197,21 +296,10 @@
   40%, 60% { transform: translate3d(3px, 0, 0); }
 }
 
-// ========== Splash Animation ==========
+// Splash Screen
 @keyframes splashEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes splashLoading {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .splashContent {
@@ -219,27 +307,36 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: splashEnter 0.4s ease-out;
-  padding: 60px;
+  animation: splashEnter 0.5s ease-out;
+  padding: 80px;
   background: transparent;
 }
 
 .splashLoader {
-  width: 100px;
+  width: 120px;
   height: 2px;
-  background: var(--border-color);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
   overflow: hidden;
   position: relative;
+  
+  // Glow effect on loader
+  box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.5);
 }
 
 .splashLoaderBar {
   position: absolute;
   top: 0;
   left: 0;
-  width: 50%;
+  width: 30%;
   height: 100%;
-  background: var(--primary-color);
+  background: #ffffff;
   border-radius: 2px;
-  animation: splashLoading 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: splashLoading 1.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  box-shadow: 0 0 8px #ffffff;
+}
+
+@keyframes splashLoading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
 }
