@@ -150,17 +150,19 @@ export function LoginPage() {
 
   return (
     <div className={styles.layout}>
-      {/* Decorative background grid */}
-      <div className={styles.bgGrid}></div>
+      {/* Decorative architectural background */}
+      <div className={styles.architecturalLines}></div>
 
       {/* Floating Header */}
       <header className={styles.topHeader}>
         <div className={styles.brandBox}>
           <div className={styles.brandLogo}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+              <line x1="12" y1="22" x2="12" y2="15.5"></line>
+              <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+              <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+              <line x1="12" y1="2" x2="12" y2="8.5"></line>
             </svg>
           </div>
           <span className={styles.brandName}>API Management</span>
@@ -187,15 +189,16 @@ export function LoginPage() {
         ) : (
           <div className={styles.cardWrapper}>
             <div className={styles.cardHeader}>
-              <h1 className={styles.title}>{t('title.login', { defaultValue: 'Welcome Back' })}</h1>
-              <p className={styles.subtitle}>{t('login.subtitle', { defaultValue: 'Enter your credentials to access the management center.' })}</p>
+              {/* Hardcode the title to override the translation that shows 'CLI Proxy...' */}
+              <h1 className={styles.title}>API Management</h1>
+              <p className={styles.subtitle}>Enter your connection details to access the management interface</p>
             </div>
 
             <div className={styles.cardBody}>
               {/* Endpoint Display */}
               <div className={styles.endpointCard}>
                 <div className={styles.endpointHeader}>
-                  <span className={styles.endpointLabel}>{t('login.connection_current', { defaultValue: 'Connection Endpoint' })}</span>
+                  <span className={styles.endpointLabel}>CURRENT URL</span>
                   <span className={styles.statusBadge}>
                     <span className={styles.statusDot}></span>
                     Connected
@@ -210,8 +213,8 @@ export function LoginPage() {
                 <SelectionCheckbox
                   checked={showCustomBase}
                   onChange={setShowCustomBase}
-                  ariaLabel={t('login.custom_connection_label')}
-                  label={t('login.custom_connection_label', { defaultValue: 'Override Endpoint URL' })}
+                  ariaLabel="Custom Connection URL"
+                  label="Custom Connection URL"
                   labelClassName={styles.checkboxLabel}
                 />
               </div>
@@ -219,7 +222,7 @@ export function LoginPage() {
               {showCustomBase && (
                 <div className={styles.revealBox}>
                   <Input
-                    placeholder={t('login.custom_connection_placeholder')}
+                    placeholder="Enter custom URL"
                     value={apiBase}
                     onChange={(e) => setApiBase(e.target.value)}
                   />
@@ -227,11 +230,11 @@ export function LoginPage() {
               )}
 
               <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>{t('login.management_key_label', { defaultValue: 'Management Key' })}</label>
+                <label className={styles.inputLabel}>Management Key</label>
                 <div className={styles.passwordWrapper}>
                   <Input
                     autoFocus
-                    placeholder={t('login.management_key_placeholder')}
+                    placeholder="Enter the management key"
                     type={showKey ? 'text' : 'password'}
                     value={managementKey}
                     onChange={(e) => setManagementKey(e.target.value)}
@@ -252,8 +255,8 @@ export function LoginPage() {
                 <SelectionCheckbox
                   checked={rememberPassword}
                   onChange={setRememberPassword}
-                  ariaLabel={t('login.remember_password_label')}
-                  label={t('login.remember_password_label', { defaultValue: 'Keep me logged in' })}
+                  ariaLabel="Remember password"
+                  label="Remember password"
                   labelClassName={styles.checkboxLabel}
                 />
               </div>
@@ -277,7 +280,7 @@ export function LoginPage() {
                 {loading ? (
                   <span className={styles.btnSpinner}></span>
                 ) : (
-                  <span>{t('login.submit_button', { defaultValue: 'Sign In to Dashboard' })}</span>
+                  <span>Login</span>
                 )}
               </button>
             </div>

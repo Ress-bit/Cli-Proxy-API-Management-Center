@@ -4,28 +4,28 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fafafa; // Ultra light, subtle warm gray
+  background-color: #fafafa;
   color: #0f172a;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   position: relative;
   overflow: hidden;
 }
 
-// Clean, elegant subtle grid
-.bgGrid {
+// Clean grid matching the screenshot
+.architecturalLines {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-    linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
   pointer-events: none;
   z-index: 0;
+  opacity: 0.5;
 }
 
-// Header
 .topHeader {
   position: relative;
   z-index: 20;
@@ -46,22 +46,22 @@
 }
 
 .brandLogo {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #0f172a;
   
   svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 }
 
 .brandName {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: #0f172a;
 }
@@ -69,25 +69,23 @@
 .selectWrapper {
   .languageSelect {
     :global(.select-trigger) {
-      background: transparent;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      background: #1e293b;
+      border: 1px solid #0f172a;
+      border-radius: 6px;
       height: 36px;
       padding: 0 16px;
-      color: #475569;
+      color: #ffffff;
       font-size: 13px;
       font-weight: 500;
       transition: all 0.2s ease;
       
       &:hover {
-        background: #f1f5f9;
-        color: #0f172a;
+        background: #0f172a;
       }
     }
   }
 }
 
-// Main Content
 .mainContent {
   flex: 1;
   position: relative;
@@ -98,10 +96,9 @@
   padding: 24px;
 }
 
-// Professional Clean Card
 .cardWrapper {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -116,18 +113,20 @@
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 16px 0;
   letter-spacing: -0.03em;
   color: #0f172a;
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 15px;
+  font-size: 14px;
   color: #64748b;
   margin: 0;
   line-height: 1.5;
+  font-weight: 400;
 }
 
 .cardBody {
@@ -136,21 +135,20 @@
   gap: 20px;
   background: #ffffff;
   padding: 40px;
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.05), 0 0 10px rgba(0,0,0,0.02);
   
   @media (max-width: $breakpoint-mobile) {
     padding: 32px 24px;
-    border-radius: 16px;
+    border-radius: 12px;
   }
 }
 
-// Endpoint Card Inside Form
 .endpointCard {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 16px;
 }
 
@@ -158,12 +156,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .endpointLabel {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -173,12 +171,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   color: #10b981;
-  background: #ecfdf5;
-  padding: 2px 8px;
-  border-radius: 12px;
 }
 
 .statusDot {
@@ -191,7 +186,7 @@
 .endpointValue {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
@@ -199,13 +194,13 @@
 }
 
 .toggleRow {
-  margin-top: -4px;
+  margin-top: 4px;
 }
 
 .checkboxLabel {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: #475569;
+  color: #334155;
   cursor: pointer;
   
   &:hover {
@@ -221,13 +216,13 @@
   }
   
   :global(input) {
-    height: 44px;
+    height: 40px;
     background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
     color: #0f172a;
-    padding: 0 16px;
+    padding: 0 12px;
     transition: all 0.2s ease;
     
     &:focus {
@@ -247,11 +242,12 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: 8px;
 }
 
 .inputLabel {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: #0f172a;
 }
 
@@ -263,11 +259,11 @@
   }
   
   :global(input) {
-    height: 48px;
+    height: 44px;
     background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
     color: #0f172a;
     padding: 0 44px 0 16px;
     transition: all 0.2s ease;
@@ -282,7 +278,7 @@
 
 .visibilityToggle {
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
@@ -302,17 +298,16 @@
   }
 }
 
-// Error Box
 .errorAlert {
   display: flex;
   align-items: center;
   gap: 12px;
   background: #fef2f2;
   border: 1px solid #fee2e2;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 12px 16px;
   color: #b91c1c;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
@@ -324,32 +319,30 @@
   40%, 60% { transform: translate3d(3px, 0, 0); }
 }
 
-// Primary Button
 .primaryButton {
-  margin-top: 8px;
+  margin-top: 16px;
   height: 48px;
   background: #0f172a;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.1);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.15), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
     background: #1e293b;
   }
   
   &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
   }
   
   &.loading {
@@ -367,7 +360,6 @@
   animation: spin 0.8s linear infinite;
 }
 
-// Splash specific
 .splashState {
   display: flex;
   flex-direction: column;
