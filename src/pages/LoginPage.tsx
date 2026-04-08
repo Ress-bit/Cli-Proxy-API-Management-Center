@@ -151,92 +151,64 @@ export function LoginPage() {
 
   return (
     <div className={styles.layout}>
-      <aside className={styles.sidebar}>
-        <div className={styles.branding}>
-          <div className={styles.logoBlock}></div>
-          <span className={styles.logoText}>MANAGEMENT_</span>
-        </div>
-
-        <div className={styles.heroTextContainer}>
-          <h1 className={styles.heroHeadline}>
-            Secure<br />
-            Config<br />
-            Gateway.
-          </h1>
-          <p className={styles.heroSubtext}>
-            Authenticate with your management key to establish an encrypted tunnel to the proxy administration center.
-          </p>
-        </div>
-
-        <div className={styles.sidebarFooter}>
-          <div className={styles.metaData}>
-            <span>SYS_VERSION: 1.0.0</span>
-            <span>NODE_ENV: PRODUCTION</span>
+      <div className={styles.formContainer}>
+        {showSplash ? (
+          <div className={styles.splashState}>
+            <div className={styles.spinner} />
+            <div className={styles.splashText}>Authenticating...</div>
           </div>
-        </div>
-      </aside>
-
-      <main className={styles.mainContent}>
-        <header className={styles.topHeader}>
-          <div className={styles.spacer}></div>
-          <Select
-            className={styles.languageSelect}
-            value={language}
-            options={languageOptions}
-            onChange={handleLanguageChange}
-            fullWidth={false}
-            ariaLabel={t('language.switch')}
-          />
-        </header>
-
-        <div className={styles.authContainer}>
-          {showSplash ? (
-            <div className={styles.loadingScreen}>
-              <div className={styles.loaderLine}></div>
-              <span className={styles.loaderText}>INITIALIZING_HANDSHAKE...</span>
-            </div>
-          ) : (
-            <div className={styles.authForm}>
-              <div className={styles.formHeader}>
-                <h2 className={styles.formTitle}>{t('title.login', { defaultValue: 'Authenticate' })}</h2>
-                <div className={styles.divider}></div>
-              </div>
-
-              <div className={styles.connectionPanel}>
-                <div className={styles.panelHeader}>
-                  <div className={styles.panelLabel}>TARGET_ENDPOINT</div>
-                  <div className={styles.statusPulse}></div>
+        ) : (
+          <div className={styles.loginCard}>
+            <div className={styles.header}>
+              <div className={styles.brand}>
+                <div className={styles.brandIcon}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
                 </div>
-                <div className={styles.panelValue} title={apiBase || detectedBase}>
-                  {apiBase || detectedBase}
+                <span>API Management</span>
+              </div>
+              <h1 className={styles.title}>{t('title.login', { defaultValue: 'Sign In' })}</h1>
+              <p className={styles.subtitle}>{t('login.subtitle', { defaultValue: 'Welcome back. Please enter your credentials.' })}</p>
+            </div>
+
+            <div className={styles.formBody}>
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>{t('login.connection_current', { defaultValue: 'Endpoint' })}</label>
+                <div className={styles.endpointBox}>
+                  <div className={styles.endpointValue} title={apiBase || detectedBase}>
+                    {apiBase || detectedBase}
+                  </div>
+                  <div className={styles.endpointStatus}></div>
                 </div>
                 
-                <div className={styles.panelActions}>
+                <div className={styles.customEndpointToggle}>
                   <SelectionCheckbox
                     checked={showCustomBase}
                     onChange={setShowCustomBase}
                     ariaLabel={t('login.custom_connection_label')}
-                    label="OVERRIDE_ENDPOINT"
-                    labelClassName={styles.monoLabel}
+                    label={t('login.custom_connection_label', { defaultValue: 'Override Endpoint' })}
+                    labelClassName={styles.checkboxLabel}
                   />
                 </div>
+                
+                {showCustomBase && (
+                  <div className={styles.revealInput}>
+                    <Input
+                      placeholder={t('login.custom_connection_placeholder')}
+                      value={apiBase}
+                      onChange={(e) => setApiBase(e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
 
-              {showCustomBase && (
-                <div className={styles.animatedField}>
-                  <Input
-                    label={t('login.custom_connection_label', { defaultValue: 'URL OVERRIDE' })}
-                    placeholder={t('login.custom_connection_placeholder')}
-                    value={apiBase}
-                    onChange={(e) => setApiBase(e.target.value)}
-                  />
-                </div>
-              )}
-
-              <div className={styles.fieldGroup}>
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>{t('login.management_key_label', { defaultValue: 'Management Key' })}</label>
                 <Input
                   autoFocus
-                  label={t('login.management_key_label', { defaultValue: 'MANAGEMENT_KEY' })}
                   placeholder={t('login.management_key_placeholder')}
                   type={showKey ? 'text' : 'password'}
                   value={managementKey}
@@ -245,45 +217,70 @@ export function LoginPage() {
                   rightElement={
                     <button
                       type="button"
-                      className={styles.visibilityToggle}
+                      className={styles.passwordToggle}
                       onClick={() => setShowKey((prev) => !prev)}
-                      aria-label="Toggle visibility"
+                      aria-label="Toggle Password Visibility"
                     >
-                      {showKey ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                      {showKey ? <IconEyeOff size={18} /> : <IconEye size={18} />}
                     </button>
                   }
                 />
-
-                <div className={styles.persistToggle}>
+                
+                <div className={styles.rememberToggle}>
                   <SelectionCheckbox
                     checked={rememberPassword}
                     onChange={setRememberPassword}
                     ariaLabel={t('login.remember_password_label')}
-                    label={t('login.remember_password_label', { defaultValue: 'PERSIST_SESSION' })}
-                    labelClassName={styles.monoLabel}
+                    label={t('login.remember_password_label', { defaultValue: 'Remember Me' })}
+                    labelClassName={styles.checkboxLabel}
                   />
                 </div>
               </div>
 
               {error && (
-                <div className={styles.errorBanner}>
-                  <div className={styles.errorHeader}>ERR_AUTH_FAILED</div>
-                  <div className={styles.errorBody}>{error}</div>
+                <div className={styles.alertBox}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={styles.alertIcon}>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  <span>{error}</span>
                 </div>
               )}
 
               <Button 
+                fullWidth 
                 onClick={handleSubmit} 
                 loading={loading}
-                className={styles.actionButton}
-                fullWidth
+                className={styles.submitBtn}
               >
-                {loading ? 'AUTHORIZING...' : 'INITIATE_CONNECTION'}
+                {loading ? t('login.submitting', { defaultValue: 'Signing In...' }) : t('login.submit_button', { defaultValue: 'Sign In' })}
               </Button>
             </div>
-          )}
+          </div>
+        )}
+      </div>
+      
+      <div className={styles.imageContainer}>
+        <div className={styles.imageOverlay}>
+          <div className={styles.overlayContent}>
+            <h2>API Management</h2>
+            <p>Control, monitor, and scale your proxy infrastructure with an elegant centralized dashboard.</p>
+          </div>
         </div>
-      </main>
+      </div>
+      
+      <div className={styles.floatingLang}>
+        <Select
+          className={styles.languageSelect}
+          value={language}
+          options={languageOptions}
+          onChange={handleLanguageChange}
+          fullWidth={false}
+          ariaLabel={t('language.switch')}
+        />
+      </div>
     </div>
   );
 }
+
