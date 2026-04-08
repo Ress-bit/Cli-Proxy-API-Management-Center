@@ -150,60 +150,82 @@ export function LoginPage() {
   const showSplash = autoLoading || autoLoginSuccess;
 
   return (
-    <main className={styles.wrapper}>
-      <div className={styles.topNav}>
-        <div className={styles.navBrand}>
-          <div className={styles.brandDot} />
-          <span>Management Center</span>
+    <div className={styles.layout}>
+      <aside className={styles.sidebar}>
+        <div className={styles.branding}>
+          <div className={styles.logoBlock}></div>
+          <span className={styles.logoText}>MANAGEMENT_</span>
         </div>
-        <Select
-          className={styles.languageSelect}
-          value={language}
-          options={languageOptions}
-          onChange={handleLanguageChange}
-          fullWidth={false}
-          ariaLabel={t('language.switch')}
-        />
-      </div>
 
-      <div className={styles.content}>
-        {showSplash ? (
-          <div className={styles.splashState}>
-            <div className={styles.spinner} />
-            <div className={styles.splashText}>Authenticating...</div>
+        <div className={styles.heroTextContainer}>
+          <h1 className={styles.heroHeadline}>
+            Secure<br />
+            Config<br />
+            Gateway.
+          </h1>
+          <p className={styles.heroSubtext}>
+            Authenticate with your management key to establish an encrypted tunnel to the proxy administration center.
+          </p>
+        </div>
+
+        <div className={styles.sidebarFooter}>
+          <div className={styles.metaData}>
+            <span>SYS_VERSION: 1.0.0</span>
+            <span>NODE_ENV: PRODUCTION</span>
           </div>
-        ) : (
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <h1 className={styles.title}>{t('title.login', { defaultValue: 'Welcome Back' })}</h1>
-              <p className={styles.subtitle}>{t('login.subtitle', { defaultValue: 'Enter your management key to continue.' })}</p>
-            </div>
+        </div>
+      </aside>
 
-            <div className={styles.cardBody}>
-              <div className={styles.serverBlock}>
-                <div className={styles.serverStatus}>
-                  <div className={styles.statusIndicator} />
-                  <span>{t('login.connection_current', { defaultValue: 'Target Server' })}</span>
-                </div>
-                <div className={styles.serverUrl} title={apiBase || detectedBase}>
-                  {apiBase || detectedBase}
-                </div>
+      <main className={styles.mainContent}>
+        <header className={styles.topHeader}>
+          <div className={styles.spacer}></div>
+          <Select
+            className={styles.languageSelect}
+            value={language}
+            options={languageOptions}
+            onChange={handleLanguageChange}
+            fullWidth={false}
+            ariaLabel={t('language.switch')}
+          />
+        </header>
+
+        <div className={styles.authContainer}>
+          {showSplash ? (
+            <div className={styles.loadingScreen}>
+              <div className={styles.loaderLine}></div>
+              <span className={styles.loaderText}>INITIALIZING_HANDSHAKE...</span>
+            </div>
+          ) : (
+            <div className={styles.authForm}>
+              <div className={styles.formHeader}>
+                <h2 className={styles.formTitle}>{t('title.login', { defaultValue: 'Authenticate' })}</h2>
+                <div className={styles.divider}></div>
               </div>
 
-              <div className={styles.advancedToggle}>
-                <SelectionCheckbox
-                  checked={showCustomBase}
-                  onChange={setShowCustomBase}
-                  ariaLabel={t('login.custom_connection_label')}
-                  label={t('login.custom_connection_label', { defaultValue: 'Customize Server URL' })}
-                  labelClassName={styles.checkboxLabel}
-                />
+              <div className={styles.connectionPanel}>
+                <div className={styles.panelHeader}>
+                  <div className={styles.panelLabel}>TARGET_ENDPOINT</div>
+                  <div className={styles.statusPulse}></div>
+                </div>
+                <div className={styles.panelValue} title={apiBase || detectedBase}>
+                  {apiBase || detectedBase}
+                </div>
+                
+                <div className={styles.panelActions}>
+                  <SelectionCheckbox
+                    checked={showCustomBase}
+                    onChange={setShowCustomBase}
+                    ariaLabel={t('login.custom_connection_label')}
+                    label="OVERRIDE_ENDPOINT"
+                    labelClassName={styles.monoLabel}
+                  />
+                </div>
               </div>
 
               {showCustomBase && (
-                <div className={styles.animateReveal}>
+                <div className={styles.animatedField}>
                   <Input
-                    label={t('login.custom_connection_label')}
+                    label={t('login.custom_connection_label', { defaultValue: 'URL OVERRIDE' })}
                     placeholder={t('login.custom_connection_placeholder')}
                     value={apiBase}
                     onChange={(e) => setApiBase(e.target.value)}
@@ -211,10 +233,10 @@ export function LoginPage() {
                 </div>
               )}
 
-              <div className={styles.inputGroup}>
+              <div className={styles.fieldGroup}>
                 <Input
                   autoFocus
-                  label={t('login.management_key_label')}
+                  label={t('login.management_key_label', { defaultValue: 'MANAGEMENT_KEY' })}
                   placeholder={t('login.management_key_placeholder')}
                   type={showKey ? 'text' : 'password'}
                   value={managementKey}
@@ -223,53 +245,45 @@ export function LoginPage() {
                   rightElement={
                     <button
                       type="button"
-                      className={styles.iconButton}
+                      className={styles.visibilityToggle}
                       onClick={() => setShowKey((prev) => !prev)}
-                      aria-label="Toggle Password"
+                      aria-label="Toggle visibility"
                     >
                       {showKey ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                     </button>
                   }
                 />
-              </div>
 
-              <div className={styles.advancedToggle}>
-                <SelectionCheckbox
-                  checked={rememberPassword}
-                  onChange={setRememberPassword}
-                  ariaLabel={t('login.remember_password_label')}
-                  label={t('login.remember_password_label')}
-                  labelClassName={styles.checkboxLabel}
-                />
+                <div className={styles.persistToggle}>
+                  <SelectionCheckbox
+                    checked={rememberPassword}
+                    onChange={setRememberPassword}
+                    ariaLabel={t('login.remember_password_label')}
+                    label={t('login.remember_password_label', { defaultValue: 'PERSIST_SESSION' })}
+                    labelClassName={styles.monoLabel}
+                  />
+                </div>
               </div>
 
               {error && (
-                <div className={styles.alert}>
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  <span>{error}</span>
+                <div className={styles.errorBanner}>
+                  <div className={styles.errorHeader}>ERR_AUTH_FAILED</div>
+                  <div className={styles.errorBody}>{error}</div>
                 </div>
               )}
 
               <Button 
-                fullWidth 
                 onClick={handleSubmit} 
                 loading={loading}
-                className={styles.primaryButton}
+                className={styles.actionButton}
+                fullWidth
               >
-                {loading ? t('login.submitting', { defaultValue: 'Connecting...' }) : t('login.submit_button', { defaultValue: 'Connect' })}
+                {loading ? 'AUTHORIZING...' : 'INITIATE_CONNECTION'}
               </Button>
             </div>
-          </div>
-        )}
-      </div>
-
-      <div className={styles.footer}>
-        Secure Connection &bull; End-to-End Encrypted
-      </div>
-    </main>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
