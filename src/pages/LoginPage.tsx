@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
@@ -151,40 +150,83 @@ export function LoginPage() {
 
   return (
     <div className={styles.layout}>
-      <div className={styles.formContainer}>
+      {/* Dynamic Aurora Background */}
+      <div className={styles.auroraBackground}>
+        <div className={styles.aurora1}></div>
+        <div className={styles.aurora2}></div>
+        <div className={styles.aurora3}></div>
+        <div className={styles.aurora4}></div>
+      </div>
+      
+      {/* Noise Overlay for texture */}
+      <div className={styles.noiseOverlay}></div>
+
+      {/* Floating Header */}
+      <header className={styles.topHeader}>
+        <div className={styles.brandContainer}>
+          <div className={styles.brandLogo}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <span className={styles.brandName}>API Management</span>
+        </div>
+        
+        <div className={styles.glassSelect}>
+          <Select
+            className={styles.languageSelect}
+            value={language}
+            options={languageOptions}
+            onChange={handleLanguageChange}
+            fullWidth={false}
+            ariaLabel={t('language.switch')}
+          />
+        </div>
+      </header>
+
+      <main className={styles.mainContent}>
         {showSplash ? (
           <div className={styles.splashState}>
-            <div className={styles.spinner} />
-            <div className={styles.splashText}>Authenticating...</div>
+            <div className={styles.orbLoader}>
+              <div className={styles.orbInner}></div>
+            </div>
+            <div className={styles.splashText}>Establishing connection...</div>
           </div>
         ) : (
-          <div className={styles.loginCard}>
-            <div className={styles.header}>
-              <div className={styles.brand}>
-                <div className={styles.brandIcon}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
-                </div>
-                <span>API Management</span>
+          <div className={styles.glassCard}>
+            <div className={styles.cardGlow}></div>
+            
+            <div className={styles.formContainer}>
+              <div className={styles.header}>
+                <h1 className={styles.title}>{t('title.login', { defaultValue: 'Welcome Back' })}</h1>
+                <p className={styles.subtitle}>{t('login.subtitle', { defaultValue: 'Authenticate to access the dashboard.' })}</p>
               </div>
-              <h1 className={styles.title}>{t('title.login', { defaultValue: 'Sign In' })}</h1>
-              <p className={styles.subtitle}>{t('login.subtitle', { defaultValue: 'Welcome back. Please enter your credentials.' })}</p>
-            </div>
 
-            <div className={styles.formBody}>
-              <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>{t('login.connection_current', { defaultValue: 'Endpoint' })}</label>
-                <div className={styles.endpointBox}>
-                  <div className={styles.endpointValue} title={apiBase || detectedBase}>
-                    {apiBase || detectedBase}
+              <div className={styles.formBody}>
+                {/* Visual Connection Node */}
+                <div className={styles.connectionNode}>
+                  <div className={styles.nodeIcon}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                      <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                      <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                      <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
                   </div>
-                  <div className={styles.endpointStatus}></div>
+                  <div className={styles.nodeDetails}>
+                    <span className={styles.nodeLabel}>{t('login.connection_current', { defaultValue: 'Target Endpoint' })}</span>
+                    <span className={styles.nodeValue} title={apiBase || detectedBase}>
+                      {apiBase || detectedBase}
+                    </span>
+                  </div>
+                  <div className={styles.nodeStatus}>
+                    <div className={styles.statusPing}></div>
+                  </div>
                 </div>
-                
-                <div className={styles.customEndpointToggle}>
+
+                <div className={styles.overrideToggle}>
                   <SelectionCheckbox
                     checked={showCustomBase}
                     onChange={setShowCustomBase}
@@ -193,39 +235,49 @@ export function LoginPage() {
                     labelClassName={styles.checkboxLabel}
                   />
                 </div>
-                
+
                 {showCustomBase && (
-                  <div className={styles.revealInput}>
-                    <Input
-                      placeholder={t('login.custom_connection_placeholder')}
-                      value={apiBase}
-                      onChange={(e) => setApiBase(e.target.value)}
-                    />
+                  <div className={styles.animatedReveal}>
+                    <div className={styles.customInputWrapper}>
+                      <Input
+                        placeholder={t('login.custom_connection_placeholder')}
+                        value={apiBase}
+                        onChange={(e) => setApiBase(e.target.value)}
+                      />
+                    </div>
                   </div>
                 )}
-              </div>
 
-              <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>{t('login.management_key_label', { defaultValue: 'Management Key' })}</label>
-                <Input
-                  autoFocus
-                  placeholder={t('login.management_key_placeholder')}
-                  type={showKey ? 'text' : 'password'}
-                  value={managementKey}
-                  onChange={(e) => setManagementKey(e.target.value)}
-                  onKeyDown={handleSubmitKeyDown}
-                  rightElement={
-                    <button
-                      type="button"
-                      className={styles.passwordToggle}
-                      onClick={() => setShowKey((prev) => !prev)}
-                      aria-label="Toggle Password Visibility"
-                    >
-                      {showKey ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-                    </button>
-                  }
-                />
-                
+                <div className={styles.keyInputWrapper}>
+                  <label className={styles.inputLabel}>{t('login.management_key_label', { defaultValue: 'Management Key' })}</label>
+                  <div className={styles.glassInputGroup}>
+                    <div className={styles.inputIcon}>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </div>
+                    <Input
+                      autoFocus
+                      placeholder={t('login.management_key_placeholder')}
+                      type={showKey ? 'text' : 'password'}
+                      value={managementKey}
+                      onChange={(e) => setManagementKey(e.target.value)}
+                      onKeyDown={handleSubmitKeyDown}
+                      rightElement={
+                        <button
+                          type="button"
+                          className={styles.visibilityToggle}
+                          onClick={() => setShowKey((prev) => !prev)}
+                          aria-label="Toggle Password Visibility"
+                        >
+                          {showKey ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                        </button>
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div className={styles.rememberToggle}>
                   <SelectionCheckbox
                     checked={rememberPassword}
@@ -235,51 +287,47 @@ export function LoginPage() {
                     labelClassName={styles.checkboxLabel}
                   />
                 </div>
+
+                {error && (
+                  <div className={styles.errorToast}>
+                    <div className={styles.errorIcon}>
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                    <div className={styles.errorText}>{error}</div>
+                  </div>
+                )}
+
+                <button 
+                  className={`${styles.masterSubmitBtn} ${loading ? styles.loading : ''}`}
+                  onClick={handleSubmit}
+                  disabled={loading}
+                >
+                  <span className={styles.btnText}>
+                    {loading ? t('login.submitting', { defaultValue: 'Authenticating...' }) : t('login.submit_button', { defaultValue: 'Sign In' })}
+                  </span>
+                  {!loading && (
+                    <span className={styles.btnArrow}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </span>
+                  )}
+                </button>
               </div>
-
-              {error && (
-                <div className={styles.alertBox}>
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={styles.alertIcon}>
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <Button 
-                fullWidth 
-                onClick={handleSubmit} 
-                loading={loading}
-                className={styles.submitBtn}
-              >
-                {loading ? t('login.submitting', { defaultValue: 'Signing In...' }) : t('login.submit_button', { defaultValue: 'Sign In' })}
-              </Button>
             </div>
           </div>
         )}
-      </div>
+      </main>
       
-      <div className={styles.imageContainer}>
-        <div className={styles.imageOverlay}>
-          <div className={styles.overlayContent}>
-            <h2>API Management</h2>
-            <p>Control, monitor, and scale your proxy infrastructure with an elegant centralized dashboard.</p>
-          </div>
+      <footer className={styles.footer}>
+        <div className={styles.footerText}>
+          API Management Engine &bull; System Operational
         </div>
-      </div>
-      
-      <div className={styles.floatingLang}>
-        <Select
-          className={styles.languageSelect}
-          value={language}
-          options={languageOptions}
-          onChange={handleLanguageChange}
-          fullWidth={false}
-          ariaLabel={t('language.switch')}
-        />
-      </div>
+      </footer>
     </div>
   );
 }
