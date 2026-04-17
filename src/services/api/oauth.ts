@@ -11,6 +11,7 @@ export type OAuthProvider =
   | 'codebuddy'
   | 'cursor'
   | 'gemini-cli'
+  | 'github'
   | 'kilo'
   | 'kimi'
   | 'qwen';

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ComponentType,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -8,6 +15,7 @@ import { oauthApi, type OAuthProvider, type IFlowCookieAuthResponse } from '@/se
 import { vertexApi, type VertexImportResponse } from '@/services/api/vertex';
 import { kiroApi } from '@/services/api/kiro';
 import { copyToClipboard } from '@/utils/clipboard';
+import { IconGithub, type IconProps } from '@/components/ui/icons';
 import styles from './OAuthPage.module.scss';
 import iconCodex from '@/assets/icons/codex.svg';
 import iconClaude from '@/assets/icons/claude.svg';
@@ -116,7 +124,7 @@ const PROVIDERS: {
   titleKey: string;
   hintKey: string;
   urlLabelKey: string;
-  icon: string | { light: string; dark: string };
+  icon: string | { light: string; dark: string } | ComponentType<IconProps>;
 }[] = [
   {
     id: 'codex',
@@ -161,6 +169,13 @@ const PROVIDERS: {
     icon: iconGemini,
   },
   {
+    id: 'github',
+    titleKey: 'auth_login.github_oauth_title',
+    hintKey: 'auth_login.github_oauth_hint',
+    urlLabelKey: 'auth_login.github_oauth_url_label',
+    icon: IconGithub,
+  },
+  {
     id: 'kilo',
     titleKey: 'auth_login.kilo_oauth_title',
     hintKey: 'auth_login.kilo_oauth_hint',
@@ -188,8 +203,19 @@ const getProviderI18nPrefix = (provider: OAuthProvider) => provider.replace('-',
 const getAuthKey = (provider: OAuthProvider, suffix: string) =>
   `auth_login.${getProviderI18nPrefix(provider)}_${suffix}`;
 
-const getIcon = (icon: string | { light: string; dark: string }, theme: 'light' | 'dark') => {
-  return typeof icon === 'string' ? icon : icon[theme];
+const getIconSrc = (
+  icon: string | { light: string; dark: string } | ComponentType<IconProps>,
+  theme: 'light' | 'dark'
+) => {
+  if (typeof icon === 'string') return icon;
+  if (typeof icon === 'function') return null;
+  return icon[theme];
+};
+
+const getIconComponent = (
+  icon: string | { light: string; dark: string } | ComponentType<IconProps>
+) => {
+  return typeof icon === 'function' ? icon : null;
 };
 
 export function OAuthPage() {
@@ -641,11 +667,15 @@ export function OAuthPage() {
               <Card
                 title={
                   <span className={styles.cardTitle}>
-                    <img
-                      src={getIcon(provider.icon, resolvedTheme)}
-                      alt=""
-                      className={styles.cardTitleIcon}
-                    />
+                    {(() => {
+                      const IconComponent = getIconComponent(provider.icon);
+                      if (IconComponent) {
+                        return <IconComponent size={18} className={styles.cardTitleIcon} />;
+                      }
+
+                      const iconSrc = getIconSrc(provider.icon, resolvedTheme);
+                      return <img src={iconSrc ?? ''} alt="" className={styles.cardTitleIcon} />;
+                    })()}
                     {t(provider.titleKey)}
                   </span>
                 }

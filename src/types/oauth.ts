@@ -10,6 +10,7 @@ export type OAuthProvider =
   | 'antigravity'
   | 'codebuddy'
   | 'gemini-cli'
+  | 'github'
   | 'kimi';
 
 // OAuth 流程状态
