@@ -27,9 +27,9 @@ export interface OAuthCallbackResponse {
 export interface IFlowCookieAuthResponse {
   status: 'ok' | 'error';
   error?: string;
-  saved_path?: string;
   email?: string;
   expired?: string;
+  saved_path?: string;
   type?: string;
 }
 

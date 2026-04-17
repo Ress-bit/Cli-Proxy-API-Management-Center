@@ -15,11 +15,11 @@ import iconAntigravity from '@/assets/icons/antigravity.svg';
 import iconCodeBuddy from '@/assets/icons/codebuddy.svg';
 import iconCursor from '@/assets/icons/cursor.svg';
 import iconGemini from '@/assets/icons/gemini.svg';
+import iconIflow from '@/assets/icons/iflow.svg';
 import iconKilo from '@/assets/icons/kilo.svg';
 import iconKimiLight from '@/assets/icons/kimi-light.svg';
 import iconKimiDark from '@/assets/icons/kimi-dark.svg';
 import iconQwen from '@/assets/icons/qwen.svg';
-import iconIflow from '@/assets/icons/iflow.svg';
 import iconVertex from '@/assets/icons/vertex.svg';
 import iconKiroUpload from '@/assets/icons/kiro.svg';
 
@@ -35,14 +35,6 @@ interface ProviderState {
   callbackSubmitting?: boolean;
   callbackStatus?: 'success' | 'error';
   callbackError?: string;
-}
-
-interface IFlowCookieState {
-  cookie: string;
-  loading: boolean;
-  result?: IFlowCookieAuthResponse;
-  error?: string;
-  errorType?: 'error' | 'warning';
 }
 
 interface VertexImportResult {
@@ -80,6 +72,14 @@ type KiroImportState = {
     fileName?: string;
     email?: string;
   };
+};
+
+type IFlowCookieState = {
+  cookie: string;
+  loading: boolean;
+  error?: string;
+  errorType?: 'warning' | 'error';
+  result?: IFlowCookieAuthResponse;
 };
 
 const KIRO_POLL_INTERVAL_MS = 3000;
@@ -570,7 +570,6 @@ export function OAuthPage() {
       showNotification(message, 'error');
     }
   };
-
   const handleVertexFilePick = () => {
     vertexFileInputRef.current?.click();
   };
