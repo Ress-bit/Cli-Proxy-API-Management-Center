@@ -19,6 +19,8 @@ export type OAuthProvider =
 export interface OAuthStartResponse {
   url: string;
   state?: string;
+  user_code?: string;
+  verification_uri?: string;
 }
 
 export interface OAuthCallbackResponse {

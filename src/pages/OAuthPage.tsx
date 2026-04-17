@@ -37,6 +37,8 @@ interface ProviderState {
   status?: 'idle' | 'waiting' | 'success' | 'error';
   error?: string;
   polling?: boolean;
+  userCode?: string;
+  verificationUri?: string;
   projectId?: string;
   projectIdError?: string;
   callbackUrl?: string;
@@ -315,6 +317,8 @@ export function OAuthPage() {
       status: 'waiting',
       polling: true,
       error: undefined,
+      userCode: undefined,
+      verificationUri: undefined,
       callbackStatus: undefined,
       callbackError: undefined,
       callbackUrl: '',
@@ -327,6 +331,8 @@ export function OAuthPage() {
       updateProviderState(provider, {
         url: res.url,
         state: res.state,
+        userCode: res.user_code,
+        verificationUri: res.verification_uri,
         status: 'waiting',
         polling: true,
       });
@@ -662,6 +668,7 @@ export function OAuthPage() {
         {PROVIDERS.map((provider) => {
           const state = states[provider.id] || {};
           const canSubmitCallback = CALLBACK_SUPPORTED.includes(provider.id) && Boolean(state.url);
+          const isDeviceCodeFlow = provider.id === 'github' && Boolean(state.userCode);
           return (
             <div key={provider.id}>
               <Card
@@ -720,6 +727,34 @@ export function OAuthPage() {
                         >
                           {t(getAuthKey(provider.id, 'open_link'))}
                         </Button>
+                      </div>
+                    </div>
+                  )}
+                  {isDeviceCodeFlow && (
+                    <div className={styles.connectionBox}>
+                      <div className={styles.connectionLabel}>
+                        {t('auth_login.device_code_title')}
+                      </div>
+                      <div className={styles.keyValueList}>
+                        {state.userCode && (
+                          <div className={styles.keyValueItem}>
+                            <span className={styles.keyValueKey}>
+                              {t('auth_login.device_code_label')}
+                            </span>
+                            <span className={styles.keyValueValue}>{state.userCode}</span>
+                          </div>
+                        )}
+                        {state.verificationUri && (
+                          <div className={styles.keyValueItem}>
+                            <span className={styles.keyValueKey}>
+                              {t('auth_login.device_code_verification_label')}
+                            </span>
+                            <span className={styles.keyValueValue}>{state.verificationUri}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles.cardHintSecondary}>
+                        {t('auth_login.github_device_code_hint')}
                       </div>
                     </div>
                   )}
